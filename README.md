@@ -13,7 +13,7 @@ This API provides a `/predict` endpoint to analyze sentiment (positive/negative)
 ## Installation
 1. Clone the repo:
    ```bash
-   git clone https://github.com/[your_username]/sentiment-api-challenge.git
+   git clone https://github.com/Msobhyawwad/sentiment-api-challenge.git
    cd sentiment-api-challenge
    ```
 2. Install dependencies:
