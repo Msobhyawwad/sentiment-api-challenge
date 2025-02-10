@@ -6,7 +6,7 @@ A FastAPI service for sentiment analysis using a pre-trained model. This service
 This API provides a `/predict` endpoint to analyze sentiment (positive/negative) of input text. The current implementation has **known stability and performance issues** that need resolution.
 
 ## Prerequisites
-- Python 3.9+
+- Python 3.13+
 - Docker
 - Git
 
