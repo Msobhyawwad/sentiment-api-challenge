@@ -6,6 +6,13 @@ from optimum.onnxruntime import ORTModelForSequenceClassification
 
 import redis
 import json
+
+from pydantic import BaseModel
+
+class PredictRequest(BaseModel):
+    text: str
+
+
 app = FastAPI()
 
 model_name = "distilbert-base-uncased-finetuned-sst-2-english"
@@ -43,7 +50,8 @@ def set_cached_result(text: str, result):
     redis_client.set(text, json.dumps(result))
 
 @app.post("/predict")
-async def predict(text: str):
+async def predict(request: PredictRequest):
+    text = request.text  # Extract text from the request body
     cached_result = get_cached_result(text)
     if cached_result:
         return cached_result
@@ -78,7 +86,8 @@ int8_model = ORTModelForSequenceClassification.from_pretrained(model_name_q)
 model_q = pipeline("text-classification", model=int8_model, tokenizer=tokenizer)
 
 @app.post("/predict_quantized")
-async def predict_quantized(text: str):
+async def predict_quantized(request: PredictRequest):
+    text = request.text
     cached_result = get_cached_result(text)
     if cached_result:
         return cached_result
