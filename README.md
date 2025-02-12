@@ -70,3 +70,21 @@ This API provides a `/predict` endpoint to analyze sentiment (positive/negative)
 - Implement model quantization
 - Add monitoring/metrics
 
+
+## Solving Large Token Issues
+The given model's [documentation](https://huggingface.co/distilbert/distilbert-base-uncased#:~:text=The%20only%20constrain%20is%20that%20the%20result%20with%20the%20two%20%22sentences%22%20has%20a%20combined%20length%20of%20less%20than%20512%20tokens.) sets the limit of tokens to 512. To solve this issue we only have two options:
+
+> Truncate incoming input
+
+> Wrap in chunks 
+
+I have commented the part for the first solution where I used the built-in parameters "truncate" and "padding". However, this is not the best option as it will some information. the other path is implemented in chunks function.
+
+
+## Quantization and Distillation
+The given model is the distilled version of Bert. To quantize it, I used the quantized version of it to improve latency.
+
+I created a new endpoint called `/predict_quantized` for easier assessment of latency.
+
+
+
