@@ -4,6 +4,8 @@ import os
 
 from optimum.onnxruntime import ORTModelForSequenceClassification
 
+import redis
+import json
 app = FastAPI()
 
 model_name = "distilbert-base-uncased-finetuned-sst-2-english"
@@ -21,13 +23,35 @@ def chunk_text(text, max_length=512):
 # model = pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english", 
 #                  tokenizer="distilbert-base-uncased-finetuned-sst-2-english", truncation=True, padding=True)
 
+redis_client = redis.Redis(host="localhost", port=6379, db=0)
+
+def get_cached_result(text: str):
+    """
+    Check if the result for the given text is cached in Redis.
+    """
+    print('Getting Cached results')
+    cached_result = redis_client.get(text)
+    if cached_result:
+        return json.loads(cached_result)
+    return None
+
+def set_cached_result(text: str, result):
+    """
+    Cache the result for the given text in Redis.
+    """
+    print('Setting cache')
+    redis_client.set(text, json.dumps(result))
 
 @app.post("/predict")
 async def predict(text: str):
-    
+    cached_result = get_cached_result(text)
+    if cached_result:
+        return cached_result
     chunks = chunk_text(text, max_length=512)
 
     results = [model(chunk) for chunk in chunks]
+    set_cached_result(text, results)
+
     return results
 
 
@@ -54,10 +78,13 @@ int8_model = ORTModelForSequenceClassification.from_pretrained(model_name_q)
 model_q = pipeline("text-classification", model=int8_model, tokenizer=tokenizer)
 
 @app.post("/predict_quantized")
-async def predict(text: str):
-    
+async def predict_quantized(text: str):
+    cached_result = get_cached_result(text)
+    if cached_result:
+        return cached_result
     chunks = chunk_text(text, max_length=512)
 
     results = [model_q(chunk) for chunk in chunks]
+    set_cached_result(text, results)
     
     return results
