@@ -3,3 +3,9 @@ uvicorn==0.27.0
 transformers==4.48.3
 numpy==1.26.4
 torch==2.2.1
+httpx==0.28.1
+locust==2.32.9
+pydantic==2.10.6
+pydantic_core==2.27.2
+redis==5.2.1
+trio==0.28.0
