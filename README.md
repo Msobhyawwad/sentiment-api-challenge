@@ -86,5 +86,7 @@ The given model is the distilled version of Bert. To quantize it, I used the qua
 
 I created a new endpoint called `/predict_quantized` for easier assessment of latency.
 
-
+## Tests
+To run the tests, use the following command:
+> pytest test_app.py -v
 
